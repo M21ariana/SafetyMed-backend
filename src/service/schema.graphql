@@ -1,0 +1,182 @@
+  
+  undefined
+  
+  
+  #--------------------------Paciente-----------------------
+  type Paciente{
+    id: ID!,nombre: String!,apellido: String!,fechaNacimiento: AWSDateTime!,genero: String!,direccion: String!,telefono: String!,email: String!,consultas: [Consulta],citas: [Cita],historialMedico: HistorialMedico,usuario: Usuario
+  }
+  input PacienteCreateInput{
+    nombre: String!,apellido: String!,fechaNacimiento: AWSDateTime!,genero: String!,direccion: String!,telefono: String!,email: String!
+  }
+  input PacienteWhereUniqueInput{
+    id:String!
+  }
+  input PacienteUpdateInput{
+  nombre: String,apellido: String,fechaNacimiento: AWSDateTime,genero: String,direccion: String,telefono: String,email: String
+  }
+  ,
+  #--------------------------Medico-----------------------
+  type Medico{
+    id: ID!,nombre: String!,apellido: String!,fechaNacimiento: AWSDateTime!,genero: String!,direccion: String!,telefono: String!,email: String!,consultas: [Consulta],citas: [Cita],historialesActualizados: [HistorialMedico]
+  }
+  input MedicoCreateInput{
+    nombre: String!,apellido: String!,fechaNacimiento: AWSDateTime!,genero: String!,direccion: String!,telefono: String!,email: String!
+  }
+  input MedicoWhereUniqueInput{
+    id:String!
+  }
+  input MedicoUpdateInput{
+  nombre: String,apellido: String,fechaNacimiento: AWSDateTime,genero: String,direccion: String,telefono: String,email: String
+  }
+  ,
+  #--------------------------Consulta-----------------------
+  type Consulta{
+    id: ID!,fecha: AWSDateTime!,hora: AWSDateTime!,diagnostico: String!,tratamiento: String!,pacienteId: String!,medicoId: String!,historialMedicoId: String!,paciente: Paciente!,medico: Medico!,historialMedico: HistorialMedico!
+  }
+  input ConsultaCreateInput{
+    fecha: AWSDateTime!,hora: AWSDateTime!,diagnostico: String!,tratamiento: String!,pacienteId: String!,medicoId: String!,historialMedicoId: String!
+  }
+  input ConsultaWhereUniqueInput{
+    id:String!
+  }
+  input ConsultaUpdateInput{
+  fecha: AWSDateTime,hora: AWSDateTime,diagnostico: String,tratamiento: String,pacienteId: String,medicoId: String,historialMedicoId: String
+  }
+  ,
+  #--------------------------HistorialMedico-----------------------
+  type HistorialMedico{
+    id: ID!,antecedentes: String!,alergias: String!,medicamentos: String!,pacienteId: String!,consultas: [Consulta],paciente: Paciente!,updatedBy: [Medico]
+  }
+  input HistorialMedicoCreateInput{
+    antecedentes: String!,alergias: String!,medicamentos: String!,pacienteId: String!
+  }
+  input HistorialMedicoWhereUniqueInput{
+    id:String!
+  }
+  input HistorialMedicoUpdateInput{
+  antecedentes: String,alergias: String,medicamentos: String,pacienteId: String
+  }
+  ,
+  #--------------------------Cita-----------------------
+  type Cita{
+    id: ID!,fecha: AWSDateTime!,hora: AWSDateTime!,pacienteId: String!,medicoId: String!,paciente: Paciente!,medico: Medico!
+  }
+  input CitaCreateInput{
+    fecha: AWSDateTime!,hora: AWSDateTime!,pacienteId: String!,medicoId: String!
+  }
+  input CitaWhereUniqueInput{
+    id:String!
+  }
+  input CitaUpdateInput{
+  fecha: AWSDateTime,hora: AWSDateTime,pacienteId: String,medicoId: String
+  }
+  ,
+  #--------------------------Usuario-----------------------
+  type Usuario{
+    id: ID!,email: String!,role: String!,contrasena: String!,pacienteId: String,paciente: Paciente,session: [Session]
+  }
+  input UsuarioCreateInput{
+    email: String!,role: String!,contrasena: String!,pacienteId: String
+  }
+  input UsuarioWhereUniqueInput{
+    id:String!
+  }
+  input UsuarioUpdateInput{
+  email: String,role: String,contrasena: String,pacienteId: String
+  }
+  ,
+  #--------------------------Session-----------------------
+  type Session{
+    id: ID!,sessionToken: String!,userId: String!,expires: AWSDateTime!,user: Usuario!
+  }
+  input SessionCreateInput{
+    sessionToken: String!,userId: String!,expires: AWSDateTime!
+  }
+  input SessionWhereUniqueInput{
+    id:String!
+  }
+  input SessionUpdateInput{
+  sessionToken: String,userId: String,expires: AWSDateTime
+  }
+  
+
+  type Mutation {
+    
+    # Paciente
+    createPaciente(data:PacienteCreateInput):Paciente
+    updatePaciente(where:PacienteWhereUniqueInput!, data:PacienteUpdateInput ):Paciente  
+    upsertPaciente(where:PacienteWhereUniqueInput!, data:PacienteCreateInput ):Paciente    
+    deletePaciente(where: PacienteWhereUniqueInput!):Paciente
+  ,
+    # Medico
+    createMedico(data:MedicoCreateInput):Medico
+    updateMedico(where:MedicoWhereUniqueInput!, data:MedicoUpdateInput ):Medico  
+    upsertMedico(where:MedicoWhereUniqueInput!, data:MedicoCreateInput ):Medico    
+    deleteMedico(where: MedicoWhereUniqueInput!):Medico
+  ,
+    # Consulta
+    createConsulta(data:ConsultaCreateInput):Consulta
+    updateConsulta(where:ConsultaWhereUniqueInput!, data:ConsultaUpdateInput ):Consulta  
+    upsertConsulta(where:ConsultaWhereUniqueInput!, data:ConsultaCreateInput ):Consulta    
+    deleteConsulta(where: ConsultaWhereUniqueInput!):Consulta
+  ,
+    # HistorialMedico
+    createHistorialMedico(data:HistorialMedicoCreateInput):HistorialMedico
+    updateHistorialMedico(where:HistorialMedicoWhereUniqueInput!, data:HistorialMedicoUpdateInput ):HistorialMedico  
+    upsertHistorialMedico(where:HistorialMedicoWhereUniqueInput!, data:HistorialMedicoCreateInput ):HistorialMedico    
+    deleteHistorialMedico(where: HistorialMedicoWhereUniqueInput!):HistorialMedico
+  ,
+    # Cita
+    createCita(data:CitaCreateInput):Cita
+    updateCita(where:CitaWhereUniqueInput!, data:CitaUpdateInput ):Cita  
+    upsertCita(where:CitaWhereUniqueInput!, data:CitaCreateInput ):Cita    
+    deleteCita(where: CitaWhereUniqueInput!):Cita
+  ,
+    # Usuario
+    createUsuario(data:UsuarioCreateInput):Usuario
+    updateUsuario(where:UsuarioWhereUniqueInput!, data:UsuarioUpdateInput ):Usuario  
+    upsertUsuario(where:UsuarioWhereUniqueInput!, data:UsuarioCreateInput ):Usuario    
+    deleteUsuario(where: UsuarioWhereUniqueInput!):Usuario
+  ,
+    # Session
+    createSession(data:SessionCreateInput):Session
+    updateSession(where:SessionWhereUniqueInput!, data:SessionUpdateInput ):Session  
+    upsertSession(where:SessionWhereUniqueInput!, data:SessionCreateInput ):Session    
+    deleteSession(where: SessionWhereUniqueInput!):Session
+  
+  }
+
+
+  type Query{
+    
+    # Paciente
+    pacientes:[Paciente]
+    paciente(id:String!):Paciente
+,
+    # Medico
+    medicos:[Medico]
+    medico(id:String!):Medico
+,
+    # Consulta
+    consultas:[Consulta]
+    consulta(id:String!):Consulta
+,
+    # HistorialMedico
+    historialMedicos:[HistorialMedico]
+    historialMedico(id:String!):HistorialMedico
+,
+    # Cita
+    citas:[Cita]
+    cita(id:String!):Cita
+,
+    # Usuario
+    usuarios:[Usuario]
+    usuario(id:String!):Usuario
+,
+    # Session
+    sessions:[Session]
+    session(id:String!):Session
+
+  }
+  

@@ -1,0 +1,106 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = [ "SafetyMed", "auth"]
+}
+
+model Paciente {
+  id              String           @id @default(cuid())
+  nombre          String
+  apellido        String
+  fechaNacimiento DateTime
+  genero          String
+  direccion       String
+  telefono        String
+  email           String
+  consultas       Consulta[]       @relation("PacienteConsultas")
+  citas           Cita[]           @relation("PacienteCitas")
+  historialMedico HistorialMedico? @relation("PacienteHistorial")
+  usuario         Usuario?         @relation("PacienteUsuario")
+
+  @@schema("SafetyMed")
+}
+
+model Medico {
+  id                      String            @id @default(cuid())
+  nombre                  String
+  apellido                String
+  fechaNacimiento         DateTime
+  genero                  String
+  direccion               String
+  telefono                String
+  email                   String
+  consultas               Consulta[]        @relation("MedicoConsultas")
+  citas                   Cita[]            @relation("MedicoCitas")
+  historialesActualizados HistorialMedico[] @relation("UpdatedByMedico")
+
+  @@schema("SafetyMed")
+}
+
+model Consulta {
+  id                String          @id @default(cuid())
+  fecha             DateTime
+  hora              DateTime
+  diagnostico       String
+  tratamiento       String
+  pacienteId        String
+  medicoId          String
+  historialMedicoId String
+  paciente          Paciente        @relation("PacienteConsultas", fields: [pacienteId], references: [id])
+  medico            Medico          @relation("MedicoConsultas", fields: [medicoId], references: [id])
+  historialMedico   HistorialMedico @relation("ConsultaHistorial", fields: [historialMedicoId], references: [id])
+
+  @@schema("SafetyMed")
+}
+
+model HistorialMedico {
+  id           String     @id @default(cuid())
+  antecedentes String
+  alergias     String
+  medicamentos String
+  pacienteId   String     @unique
+  consultas    Consulta[] @relation("ConsultaHistorial")
+  paciente     Paciente   @relation("PacienteHistorial", fields: [pacienteId], references: [id])
+  updatedBy    Medico[]   @relation("UpdatedByMedico")
+
+  @@schema("SafetyMed")
+}
+
+model Cita {
+  id         String   @id @default(cuid())
+  fecha      DateTime
+  hora       DateTime
+  pacienteId String
+  medicoId   String
+  paciente   Paciente @relation("PacienteCitas", fields: [pacienteId], references: [id])
+  medico     Medico   @relation("MedicoCitas", fields: [medicoId], references: [id])
+
+  @@schema("SafetyMed")
+}
+
+model Usuario {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  role       String
+  contrasena String
+  pacienteId String?   @unique
+  paciente   Paciente? @relation("PacienteUsuario", fields: [pacienteId], references: [id])
+  session    Session[] @relation("UsuarioSession")
+
+  @@schema("auth")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         Usuario  @relation("UsuarioSession", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("auth")
+}
