@@ -1,5 +1,6 @@
 import { Resolver } from '../../types';
 import { historialMedicoDataLoader } from './dataLoaders';
+import { getWhereInHistorialMedico } from './transformations';
 
 const historialMedicoResolvers: Resolver = {
   HistorialMedico: {
@@ -21,7 +22,34 @@ const historialMedicoResolvers: Resolver = {
   },
   Query: {
     historialMedicos: async (parent, args, { db }) => {
-      return await db.historialMedico.findMany({});
+      let status = 200;
+      try {
+        const where = getWhereInHistorialMedico(args.where, args.search);
+        const data = await db.historialMedico.findMany({
+          where,
+          ...(args?.take ? { take: args.take } : {}),
+          ...(args?.skip ? { skip: args.skip } : {}),
+          orderBy: args.orderBy,
+        });
+        const count = await db.historialMedico.count({
+          where,
+        });
+        const response = {
+          data,
+          count,
+          status,
+        };
+        return response;
+      } catch (error) {
+        status = 500;
+        const response = {
+          data: null,
+          count: 0,
+          status,
+          error,
+        };
+        return response;
+      }
     },
     historialMedico: async (parent, args, { db }) => {
       return await db.historialMedico.findUnique({
@@ -34,7 +62,15 @@ const historialMedicoResolvers: Resolver = {
   Mutation: {
     createHistorialMedico: async (parent, args, { db }) => {
       return await db.historialMedico.create({
-        data: { ...args.data },
+        data: { 
+          ...args.data,
+          ...(args.data.createdAt && {
+            createdAt: new Date(args.data.createdAt).toISOString(),
+          }),
+          ...(args.data.updatedAt && {
+            updatedAt: new Date(args.data.updatedAt).toISOString(),
+          }),
+        },
       });
     },
     updateHistorialMedico: async (parent, args, { db }) => {
@@ -42,7 +78,15 @@ const historialMedicoResolvers: Resolver = {
         where: {
           id: args.where.id,
         },
-        data: { ...args.data },
+        data: { 
+          ...args.data,
+          ...(args.data.createdAt && {
+            createdAt: new Date(args.data.createdAt).toISOString(),
+          }),
+          ...(args.data.updatedAt && {
+            updatedAt: new Date(args.data.updatedAt).toISOString(),
+          }),
+        },
       });
     },
     upsertHistorialMedico: async (parent, args, { db }) => {
@@ -50,11 +94,26 @@ const historialMedicoResolvers: Resolver = {
         where: {
           id: args.where.id,
         },
-        create: { ...args.data },
-        update: { ...args.data },
+        create: { 
+          ...args.data,
+          ...(args.data.createdAt && {
+            createdAt: new Date(args.data.createdAt).toISOString(),
+          }),
+          ...(args.data.updatedAt && {
+            updatedAt: new Date(args.data.updatedAt).toISOString(),
+          }),
+        },
+        update: { 
+          ...args.data,
+          ...(args.data.createdAt && {
+            createdAt: new Date(args.data.createdAt).toISOString(),
+          }),
+          ...(args.data.updatedAt && {
+            updatedAt: new Date(args.data.updatedAt).toISOString(),
+          }),
+        },
       });
     },
-
     deleteHistorialMedico: async (parent, args, { db }) => {
       return await db.historialMedico.delete({
         where: {

@@ -63,12 +63,6 @@ const sessionType = gql`
     user: ConnectUsuarioFilter
   }
 
-  input ConnectUsuarioFilter {
-    every: UsuarioWhereFilterInput
-    some: UsuarioWhereFilterInput
-    none: UsuarioWhereFilterInput
-  }
-
   input OrderByInputSession {
     field: SessionOrderByField
     value: OrderByDirection

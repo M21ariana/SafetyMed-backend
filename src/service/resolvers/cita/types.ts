@@ -73,11 +73,7 @@ const citaType = gql`
     none: PacienteWhereFilterInput
   }
 
-  input ConnectMedicoFilter {
-    every: MedicoWhereFilterInput
-    some: MedicoWhereFilterInput
-    none: MedicoWhereFilterInput
-  }
+
 
   input OrderByInputCita {
     field: CitaOrderByField

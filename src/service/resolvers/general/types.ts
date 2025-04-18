@@ -134,7 +134,7 @@ const generalTypes = gql`
       data: UsuarioCreateInput
     ): Usuario
     deleteUsuario(where: UsuarioWhereUniqueInput!): Usuario
-    
+
     # Session
     createSession(data: SessionCreateInput): Session
     updateSession(
@@ -150,30 +150,73 @@ const generalTypes = gql`
 
   type Query {
     # Paciente
-    pacientes: [Paciente]
+    pacientes(
+      where: PacienteWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [PacienteOrderByInput]
+    ): ResponsePaciente
     paciente(id: String!): Paciente
 
     # Medico
-    medicos: [Medico]
+    medicos(
+      where: MedicoWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [MedicoOrderByInput]
+    ): ResponseMedico
     medico(id: String!): Medico
 
     # Consulta
-    consultas: [Consulta]
+    consultas(
+      where: ConsultaWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [ConsultaOrderByInput]
+    ): ResponseConsulta
     consulta(id: String!): Consulta
 
     # HistorialMedico
-    historialMedicos: [HistorialMedico]
+    historialMedicos(
+      where: HistorialMedicoWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [HistorialMedicoOrderByInput]
+    ): ResponseHistorialMedico
     historialMedico(id: String!): HistorialMedico
 
     # Cita
-    citas: [Cita]
+    citas(
+      where: CitaWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [CitaOrderByInput]
+    ): ResponseCita
     cita(id: String!): Cita
+
     # Usuario
-    usuarios: [Usuario]
+    usuarios(
+      where: UsuarioWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [UsuarioOrderByInput]
+    ): ResponseUsuario
     usuario(id: String!): Usuario
-    
+
     # Session
-    sessions: [Session]
+    sessions(
+      where: SessionWhereInput
+      search: SearchInput
+      take: Int
+      skip: Int
+      orderBy: [SessionOrderByInput]
+    ): ResponseSession
     session(id: String!): Session
   }
 `;

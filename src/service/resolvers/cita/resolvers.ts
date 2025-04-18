@@ -1,5 +1,6 @@
 import { Resolver } from '../../types';
 import { citaDataLoader } from './dataLoaders';
+import { getWhereInCitas } from './transformations';
 
 const citaResolvers: Resolver = {
   Cita: {
@@ -12,7 +13,34 @@ const citaResolvers: Resolver = {
   },
   Query: {
     citas: async (parent, args, { db }) => {
-      return await db.cita.findMany({});
+      let status = 200;
+      try {
+        const where = getWhereInCitas(args.where, args.search);
+        const data = await db.cita.findMany({
+          where,
+          ...(args?.take ? { take: args.take } : {}),
+          ...(args?.skip ? { skip: args.skip } : {}),
+          orderBy: args.orderBy,
+        });
+        const count = await db.cita.count({
+          where,
+        });
+        const response = {
+          data,
+          count,
+          status,
+        };
+        return response;
+      } catch (error) {
+        status = 500;
+        const response = {
+          data: null,
+          count: 0,
+          status,
+          error,
+        };
+        return response;
+      }
     },
     cita: async (parent, args, { db }) => {
       return await db.cita.findUnique({
@@ -27,8 +55,12 @@ const citaResolvers: Resolver = {
       return await db.cita.create({
         data: {
           ...args.data,
-          fecha: new Date(args.data.fecha).toISOString(),
-          hora: new Date(args.data.hora).toISOString(),
+          ...(args.data.fecha && {
+            fecha: new Date(args.data.fecha).toISOString(),
+          }),
+          ...(args.data.hora && {
+            hora: new Date(args.data.hora).toISOString(),
+          }),
         },
       });
     },
@@ -55,8 +87,12 @@ const citaResolvers: Resolver = {
         },
         create: {
           ...args.data,
-          fecha: new Date(args.data.fecha).toISOString(),
-          hora: new Date(args.data.hora).toISOString(),
+          ...(args.data.fecha && {
+            fecha: new Date(args.data.fecha).toISOString(),
+          }),
+          ...(args.data.hora && {
+            hora: new Date(args.data.hora).toISOString(),
+          }),
         },
         update: {
           ...args.data,
@@ -69,7 +105,6 @@ const citaResolvers: Resolver = {
         },
       });
     },
-
     deleteCita: async (parent, args, { db }) => {
       return await db.cita.delete({
         where: {

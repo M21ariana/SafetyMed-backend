@@ -104,24 +104,6 @@ const pacienteType = gql`
     usuario: ConnectUsuarioFilter
   }
 
-  input ConnectConsultaFilter {
-    every: ConsultaWhereFilterInput
-    some: ConsultaWhereFilterInput
-    none: ConsultaWhereFilterInput
-  }
-
-  input ConnectCitaFilter {
-    every: CitaWhereFilterInput
-    some: CitaWhereFilterInput
-    none: CitaWhereFilterInput
-  }
-
-  input ConnectHistorialMedicoFilter {
-    every: HistorialMedicoWhereFilterInput
-    some: HistorialMedicoWhereFilterInput
-    none: HistorialMedicoWhereFilterInput
-  }
-
   input ConnectUsuarioFilter {
     every: UsuarioWhereFilterInput
     some: UsuarioWhereFilterInput

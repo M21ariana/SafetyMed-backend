@@ -1,5 +1,6 @@
 import { Resolver } from '../../types';
 import { consultaDataLoader } from './dataLoaders';
+import { getWhereInConsultas } from './transformations';
 
 const consultaResolvers: Resolver = {
   Consulta: {
@@ -19,7 +20,34 @@ const consultaResolvers: Resolver = {
   },
   Query: {
     consultas: async (parent, args, { db }) => {
-      return await db.consulta.findMany({});
+      let status = 200;
+      try {
+        const where = getWhereInConsultas(args.where, args.search);
+        const data = await db.consulta.findMany({
+          where,
+          ...(args?.take ? { take: args.take } : {}),
+          ...(args?.skip ? { skip: args.skip } : {}),
+          orderBy: args.orderBy,
+        });
+        const count = await db.consulta.count({
+          where,
+        });
+        const response = {
+          data,
+          count,
+          status,
+        };
+        return response;
+      } catch (error) {
+        status = 500;
+        const response = {
+          data: null,
+          count: 0,
+          status,
+          error,
+        };
+        return response;
+      }
     },
     consulta: async (parent, args, { db }) => {
       return await db.consulta.findUnique({
@@ -34,8 +62,12 @@ const consultaResolvers: Resolver = {
       return await db.consulta.create({
         data: {
           ...args.data,
-          fecha: new Date(args.data.fecha).toISOString(),
-          hora: new Date(args.data.hora).toISOString(),
+          ...(args.data.fecha && {
+            fecha: new Date(args.data.fecha).toISOString(),
+          }),
+          ...(args.data.hora && {
+            hora: new Date(args.data.hora).toISOString(),
+          }),
         },
       });
     },
@@ -62,8 +94,12 @@ const consultaResolvers: Resolver = {
         },
         create: {
           ...args.data,
-          fecha: new Date(args.data.fecha).toISOString(),
-          hora: new Date(args.data.hora).toISOString(),
+          ...(args.data.fecha && {
+            fecha: new Date(args.data.fecha).toISOString(),
+          }),
+          ...(args.data.hora && {
+            hora: new Date(args.data.hora).toISOString(),
+          }),
         },
         update: {
           ...args.data,
@@ -76,7 +112,6 @@ const consultaResolvers: Resolver = {
         },
       });
     },
-
     deleteConsulta: async (parent, args, { db }) => {
       return await db.consulta.delete({
         where: {

@@ -69,11 +69,7 @@ const historialmedicoType = gql`
     none: ConsultaWhereFilterInput
   }
 
-  input ConnectPacienteFilter {
-    every: PacienteWhereFilterInput
-    some: PacienteWhereFilterInput
-    none: PacienteWhereFilterInput
-  }
+
 
   input ConnectMedicoFilter {
     every: MedicoWhereFilterInput

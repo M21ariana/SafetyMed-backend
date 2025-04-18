@@ -61,11 +61,7 @@ const usuarioType = gql`
     session: ConnectSessionFilter
   }
 
-  input ConnectPacienteFilter {
-    every: PacienteWhereFilterInput
-    some: PacienteWhereFilterInput
-    none: PacienteWhereFilterInput
-  }
+ 
 
   input ConnectSessionFilter {
     every: SessionWhereFilterInput

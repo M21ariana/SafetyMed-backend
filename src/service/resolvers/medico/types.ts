@@ -102,22 +102,12 @@ const medicoType = gql`
     historialesActualizados: ConnectHistorialMedicoFilter
   }
 
-  input ConnectConsultaFilter {
-    every: ConsultaWhereFilterInput
-    some: ConsultaWhereFilterInput
-    none: ConsultaWhereFilterInput
-  }
+
 
   input ConnectCitaFilter {
     every: CitaWhereFilterInput
     some: CitaWhereFilterInput
     none: CitaWhereFilterInput
-  }
-
-  input ConnectHistorialMedicoFilter {
-    every: HistorialMedicoWhereFilterInput
-    some: HistorialMedicoWhereFilterInput
-    none: HistorialMedicoWhereFilterInput
   }
 
   input OrderByInputMedico {

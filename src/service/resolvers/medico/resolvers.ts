@@ -1,5 +1,6 @@
 import { Resolver } from '../../types';
 import { medicoDataLoader } from './dataLoaders';
+import { getWhereInMedicos } from './transformations';
 
 const medicoResolvers: Resolver = {
   Medico: {
@@ -17,7 +18,34 @@ const medicoResolvers: Resolver = {
   },
   Query: {
     medicos: async (parent, args, { db }) => {
-      return await db.medico.findMany({});
+      let status = 200;
+      try {
+        const where = getWhereInMedicos(args.where, args.search);
+        const data = await db.medico.findMany({
+          where,
+          ...(args?.take ? { take: args.take } : {}),
+          ...(args?.skip ? { skip: args.skip } : {}),
+          orderBy: args.orderBy,
+        });
+        const count = await db.medico.count({
+          where,
+        });
+        const response = {
+          data,
+          count,
+          status,
+        };
+        return response;
+      } catch (error) {
+        status = 500;
+        const response = {
+          data: null,
+          count: 0,
+          status,
+          error,
+        };
+        return response;
+      }
     },
     medico: async (parent, args, { db }) => {
       return await db.medico.findUnique({
@@ -32,7 +60,9 @@ const medicoResolvers: Resolver = {
       return await db.medico.create({
         data: {
           ...args.data,
-          fechaNacimiento: new Date(args.data.fechaNacimiento).toISOString(),
+          ...(args.data.fechaNacimiento && {
+            fechaNacimiento: new Date(args.data.fechaNacimiento).toISOString(),
+          }),
         },
       });
     },
@@ -56,7 +86,9 @@ const medicoResolvers: Resolver = {
         },
         create: {
           ...args.data,
-          fechaNacimiento: new Date(args.data.fechaNacimiento).toISOString(),
+          ...(args.data.fechaNacimiento && {
+            fechaNacimiento: new Date(args.data.fechaNacimiento).toISOString(),
+          }),
         },
         update: {
           ...args.data,
@@ -66,7 +98,6 @@ const medicoResolvers: Resolver = {
         },
       });
     },
-
     deleteMedico: async (parent, args, { db }) => {
       return await db.medico.delete({
         where: {

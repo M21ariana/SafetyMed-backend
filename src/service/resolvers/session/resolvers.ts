@@ -1,5 +1,6 @@
 import { Resolver } from '../../types';
 import { sessionDataLoader } from './dataLoaders';
+import { getWhereInSessions } from './transformations';
 
 const sessionResolvers: Resolver = {
   Session: {
@@ -9,7 +10,34 @@ const sessionResolvers: Resolver = {
   },
   Query: {
     sessions: async (parent, args, { db }) => {
-      return await db.session.findMany({});
+      let status = 200;
+      try {
+        const where = getWhereInSessions(args.where, args.search);
+        const data = await db.session.findMany({
+          where,
+          ...(args?.take ? { take: args.take } : {}),
+          ...(args?.skip ? { skip: args.skip } : {}),
+          orderBy: args.orderBy,
+        });
+        const count = await db.session.count({
+          where,
+        });
+        const response = {
+          data,
+          count,
+          status,
+        };
+        return response;
+      } catch (error) {
+        status = 500;
+        const response = {
+          data: null,
+          count: 0,
+          status,
+          error,
+        };
+        return response;
+      }
     },
     session: async (parent, args, { db }) => {
       return await db.session.findUnique({
@@ -24,7 +52,9 @@ const sessionResolvers: Resolver = {
       return await db.session.create({
         data: {
           ...args.data,
-          expires: new Date(args.data.expires).toISOString(),
+          ...(args.data.expires && {
+            expires: new Date(args.data.expires).toISOString(),
+          }),
         },
       });
     },
@@ -48,7 +78,9 @@ const sessionResolvers: Resolver = {
         },
         create: {
           ...args.data,
-          expires: new Date(args.data.expires).toISOString(),
+          ...(args.data.expires && {
+            expires: new Date(args.data.expires).toISOString(),
+          }),
         },
         update: {
           ...args.data,
@@ -58,7 +90,6 @@ const sessionResolvers: Resolver = {
         },
       });
     },
-
     deleteSession: async (parent, args, { db }) => {
       return await db.session.delete({
         where: {
