@@ -151,71 +151,71 @@ const generalTypes = gql`
   type Query {
     # Paciente
     pacientes(
-      where: PacienteWhereInput
+      where: PacienteWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [PacienteOrderByInput]
+      orderBy: OrderByInputPaciente
     ): ResponsePaciente
     paciente(id: String!): Paciente
 
     # Medico
     medicos(
-      where: MedicoWhereInput
+      where: MedicoWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [MedicoOrderByInput]
+      orderBy: OrderByInputMedico
     ): ResponseMedico
     medico(id: String!): Medico
 
     # Consulta
     consultas(
-      where: ConsultaWhereInput
+      where: ConsultaWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [ConsultaOrderByInput]
+      orderBy: OrderByInputConsulta
     ): ResponseConsulta
     consulta(id: String!): Consulta
 
     # HistorialMedico
     historialMedicos(
-      where: HistorialMedicoWhereInput
+      where: HistorialMedicoWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [HistorialMedicoOrderByInput]
+      orderBy: OrderByInputHistorialMedico
     ): ResponseHistorialMedico
     historialMedico(id: String!): HistorialMedico
 
     # Cita
     citas(
-      where: CitaWhereInput
+      where: CitaWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [CitaOrderByInput]
+      orderBy: OrderByInputCita
     ): ResponseCita
     cita(id: String!): Cita
 
     # Usuario
     usuarios(
-      where: UsuarioWhereInput
+      where: UsuarioWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [UsuarioOrderByInput]
+      orderBy: OrderByInputUsuario
     ): ResponseUsuario
     usuario(id: String!): Usuario
 
     # Session
     sessions(
-      where: SessionWhereInput
+      where: SessionWhereFilterInput
       search: SearchInput
       take: Int
       skip: Int
-      orderBy: [SessionOrderByInput]
+      orderBy: OrderByInputSession
     ): ResponseSession
     session(id: String!): Session
   }
